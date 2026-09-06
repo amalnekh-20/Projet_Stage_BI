@@ -1,0 +1,24 @@
+import os
+
+from dotenv import load_dotenv
+from google import genai
+
+
+load_dotenv()
+
+api_key = os.getenv("GEMINI_API_KEY")
+
+if not api_key:
+    raise ValueError(
+        "GEMINI_API_KEY n'est pas définie dans le fichier .env"
+    )
+
+client = genai.Client(api_key=api_key)
+
+response = client.models.generate_content(
+    model="gemini-3.5-flash",
+    contents="Réponds simplement : API Gemini fonctionnelle."
+)
+
+print("Réponse de Gemini :")
+print(response.text)

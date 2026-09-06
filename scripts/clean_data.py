@@ -25,17 +25,27 @@ def clean_data(df):
     df = df.drop_duplicates()
     print(f"Doublons supprimes : {nb_avant - len(df)}")
     
-    # Règle 4 : isoler les codes non commerciaux
-    codes_non_commerciaux = ["POST", "DOT", "M", "BANK CHARGES", "D", "C2", "CRUK"]
-    mask_non_commercial = df["StockCode"].isin(codes_non_commerciaux)
-    df_non_commercial = df[mask_non_commercial]
-    df = df[~mask_non_commercial]
+
     
     # Règle 2 : isoler les annulations (Quantity negative)
-    mask_annulation = df["Quantity"] < 0
+    df["Invoice"] = df["Invoice"].astype(str)
+
+    mask_annulation = (
+        (df["Quantity"] < 0)
+        | (df["Invoice"].str.startswith("C"))
+    )
+
     df_annulations = df[mask_annulation]
     df_ventes = df[~mask_annulation]
-    
+
+
+    # Règle 4 : isoler les codes non commerciaux
+    codes_non_commerciaux = ["POST", "DOT", "M", "BANK CHARGES", "D", "C2", "CRUK"]
+    mask_non_commercial = df_ventes["StockCode"].isin(codes_non_commerciaux)
+    df_non_commercial = df_ventes[mask_non_commercial].copy()
+    df_ventes = df_ventes[~mask_non_commercial].copy()  
+
+
     # Règle 3 : isoler les prix <= 0
     mask_prix_suspect = df_ventes["Price"] <= 0
     df_anomalies_prix = df_ventes[mask_prix_suspect]

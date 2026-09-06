@@ -1,5 +1,11 @@
-﻿venv/
+﻿# Environnements virtuels et Données
+venv/
 data/raw/
+
+# Cache Python et Notebooks
 __pycache__/
 .ipynb_checkpoints/
 *.pyc
+
+# Configuration locale & clés d'API (Securité)
+AI_Assistant/.env
